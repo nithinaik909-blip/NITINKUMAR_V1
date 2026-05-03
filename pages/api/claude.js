@@ -5,11 +5,21 @@ export default async function handler(req, res) {
 
   try {
     const body = req.body;
-    const image = body?.image || body?.imageData || null;
-    const query = body?.query || body?.prompt || "Analyze this image";
+    const image = body?.image || body?.imageData || 
+                  body?.base64 || body?.photo || null;
+    const query = body?.query || body?.prompt || 
+                  body?.text || body?.message || 
+                  "Analyze this image in detail";
     const parts = [];
     
-    if (image) parts.push({ inline_data: { mime_type: "image/jpeg", data: image } });
+    if (image) {
+      parts.push({ 
+        inline_data: { 
+          mime_type: "image/jpeg", 
+          data: image.replace(/^data:image\/\w+;base64,/, "")
+        } 
+      });
+    }
     parts.push({ text: query });
 
     const response = await fetch(
