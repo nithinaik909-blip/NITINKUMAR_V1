@@ -4,12 +4,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { image, query } = req.body;
+    const body = req.body;
+    const image = body?.image || body?.imageData || null;
+    const query = body?.query || body?.prompt || "Analyze this image";
     const parts = [];
     
-    if (query) parts.push({ text: query });
     if (image) parts.push({ inline_data: { mime_type: "image/jpeg", data: image } });
-    if (parts.length === 0) parts.push({ text: "Analyze this PCB board" });
+    parts.push({ text: query });
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
