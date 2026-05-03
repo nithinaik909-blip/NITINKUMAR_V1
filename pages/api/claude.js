@@ -4,23 +4,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = req.body;
-    const image = body?.image || body?.imageData || 
-                  body?.base64 || body?.photo || null;
-    const query = body?.query || body?.prompt || 
-                  body?.text || body?.message || 
-                  "Analyze this image in detail";
-    const parts = [];
+    const { messages, max_tokens } = req.body;
     
-    if (image) {
-      parts.push({ 
-        inline_data: { 
-          mime_type: "image/jpeg", 
-          data: image.replace(/^data:image\/\w+;base64,/, "")
-        } 
-      });
-    }
-    parts.push({ text: query });
+    // Convert Anthropic messages format to Gemini format
+    const parts = messages.map(m => ({
+      text: typeof m.content === "string" 
+        ? m.content 
+        : m.content.map(c => c.text || "").join(" ")
+    }));
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -33,7 +24,11 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
-    res.status(200).json({ result: text });
+    
+    // Return in Anthropic format so app works unchanged
+    res.status(200).json({ 
+      content: [{ text }] 
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
