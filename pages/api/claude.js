@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   try {
     const { messages, max_tokens = 4096 } = req.body;
     const contents = messages.map(msg => ({ role: msg.role === "assistant" ? "model" : "user", parts: toGeminiParts(msg.content) }));
-    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ contents, generationConfig: { maxOutputTokens: max_tokens, temperature: 0.1 } }),
