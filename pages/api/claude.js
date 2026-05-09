@@ -16,7 +16,7 @@ function toGeminiParts(content) {
   });
 }
 
-export default async function handler(req, res) {
+module.exports.default = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY not set in Vercel env vars" });
+  if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY not set" });
 
   try {
     const { messages, max_tokens = 4096 } = req.body;
@@ -53,11 +53,9 @@ export default async function handler(req, res) {
       return res.status(geminiRes.status || 500).json({ error: geminiData.error?.message || "Gemini error" });
 
     const rawText = geminiData.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "";
-
-    // Return in Anthropic format — your JSX already understands this
     return res.status(200).json({ content: [{ type: "text", text: rawText }] });
 
   } catch (err) {
     return res.status(500).json({ error: "Server error: " + err.message });
   }
-}
+};
