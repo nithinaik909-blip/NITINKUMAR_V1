@@ -1,4 +1,4 @@
-export const config = {
+module.exports.config = {
   api: { bodyParser: { sizeLimit: "20mb" } },
 };
 
