@@ -1095,6 +1095,7 @@ console.log(`[PCB Scan] Pass ${tIdx + 2} (${tileNames[tIdx]}): raw=${tileRaw.len
       return inter / (ua + ub - inter);
     };
     const all = [...pass1, ...allTileComps];
+console.log(`[PCB Scan] Merge: pass1=${pass1.length}, tiles=${allTileComps.length}, total before dedup=${all.length}`);
     const kept = [];
     for (const c of all) {
       const dupIdx = kept.findIndex(k => iou(k, c) > 0.30);
