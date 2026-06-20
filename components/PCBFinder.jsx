@@ -1111,7 +1111,8 @@ console.log(`[PCB Scan] Merge: pass1=${pass1.length}, tiles=${allTileComps.lengt
       }
     }
 
-    onProgress?.("Finalising component list…");
+    console.log(`[PCB Scan] After dedup: ${kept.length} components survived`);
+onProgress?.("Finalising component list…");
     // Assign designator-based loc: use silkscreen name if it looks like a real designator
     // (e.g. "R3", "C12", "U4", "J2"), otherwise fall back to prefix+index
     const desRegex = /^[A-Z]{1,5}\d+$/;
