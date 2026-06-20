@@ -1006,7 +1006,9 @@ confidence: 0.0–1.0, only include if ≥ 0.65
 Return ONLY a JSON array, no markdown:
 [{ "type": "Connector", "name": "J1", "pkg": "JST-XH-4", "location": "top-right", "polarity": "pin1-top-left", "pin1": "square-pad", "pinCount": 4, "orientation": "vertical", "confidence": 0.91, "bbox": { "x": 35, "y": 12, "w": 8, "h": 6 } }]`;
     const p1raw = await claudeAPI([{ role: "user", content: [fullImg, { type: "text", text: pass1Prompt }] }], 8192);
-    const pass1 = safeJSON(p1raw).filter(c => (c.confidence ?? 1) >= 0.65 && c.bbox);
+    const passconst p1parsed = safeJSON(p1raw);
+const pass1 = p1parsed.filter(c => (c.confidence ?? 1) >= 0.65 && c.bbox);
+console.log(`[PCB Scan] Pass 1 (full board): raw=${p1raw.length} chars, parsed=${p1parsed.length} items, kept=${pass1.length}`);
 
     // ── PASS 2–5: Tile scan (2×2 grid) ─────────────────────
     const COLS = 2, ROWS = 2;
