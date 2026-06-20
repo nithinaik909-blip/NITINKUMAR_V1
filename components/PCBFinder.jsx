@@ -1067,7 +1067,9 @@ Each component = its own entry
 Return ONLY a JSON array, no markdown:
 [{ "type": "Chip Capacitor", "name": "C7", "pkg": "0603", "location": "near IC", "polarity": "plus-left", "pin1": "left", "pinCount": 2, "confidence": 0.78, "bbox": { "x": 22, "y": 45, "w": 3.5, "h": 2.0 } }]`;
         const tileRaw = await claudeAPI([{ role: "user", content: [tileImg, { type: "text", text: tilePrompt }] }], 4096);
-        const tileComps = safeJSON(tileRaw).filter(c => (c.confidence ?? 1) >= 0.65 && c.bbox);
+        const tileParsed = safeJSON(tileRaw);
+const tileComps = tileParsed.filter(c => (c.confidence ?? 1) >= 0.65 && c.bbox);
+console.log(`[PCB Scan] Pass ${tIdx + 2} (${tileNames[tIdx]}): raw=${tileRaw.length} chars, parsed=${tileParsed.length} items, kept=${tileComps.length}`);
 
         // Re-map bbox from tile-% → full-image-%
         const remapped = tileComps.map(c => ({
