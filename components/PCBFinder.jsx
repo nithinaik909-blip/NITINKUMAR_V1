@@ -59,8 +59,16 @@ async function claudeAPI(messages, maxTokens = 4096) {
   return (data.content || []).map(b => b.text || " ").join(" ").replace(/`json\n?|`/g, " ").trim();
 }
 
-function safeJSON(s) { try { return JSON.parse(s); } catch { return []; } }
-
+function safeJSON(s) {
+  try { return JSON.parse(s); } catch {}
+  const start = s.indexOf("[");
+  const end = s.lastIndexOf("]");
+  if (start !== -1 && end !== -1 && end > start) {
+    try { return JSON.parse(s.slice(start, end + 1)); } catch {}
+  }
+  console.warn("Could not parse AI response as JSON:", s.slice(0, 300));
+  return [];
+}
 /* ─────────────────────────────────────────────────────────────────
    COMPREHENSIVE COMPONENT REFERENCE DATABASE
    Data compiled from: Component ID poster, PCB Quick Reference,
